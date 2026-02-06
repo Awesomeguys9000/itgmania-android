@@ -1,0 +1,18 @@
+#!/bin/sh
+# Gradle wrapper bootstrap script
+
+# Determine the project directory
+APP_BASE_NAME=$(basename "$0")
+APP_HOME=$(cd "$(dirname "$0")" && pwd -P)
+
+CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
+
+# Check for gradle wrapper jar
+if [ ! -f "$CLASSPATH" ]; then
+    echo "Error: gradle-wrapper.jar not found"
+    echo "Please download from: https://services.gradle.org/distributions/gradle-8.2-bin.zip"
+    exit 1
+fi
+
+# Execute Gradle
+exec java -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"

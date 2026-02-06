@@ -106,3 +106,14 @@ BuildLog.htm
 *.pc
 *.d
 *.lastcodeanalysissucceeded
+
+# Android Build Artifacts
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/app/.cxx/
+*.apk
+*.aab
+*.aar
+.android-home/
