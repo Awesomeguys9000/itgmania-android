@@ -25,6 +25,9 @@ add_subdirectory(${SDL2_ROOT} SDL2_build)
 set(SM_ROOT_DIR ${ITGMANIA_ROOT})
 include(${ITGMANIA_ROOT}/StepmaniaCore.cmake)
 
+# Debug: Print the generated source dir
+message(STATUS "SM_GENERATED_SRC_DIR: ${SM_GENERATED_SRC_DIR}")
+
 # Build externals
 add_subdirectory(${ITGMANIA_ROOT}/extern extern_build)
 
@@ -68,8 +71,15 @@ list(APPEND SMDATA_ALL_FILES_SRC_ABS "${CMAKE_CURRENT_SOURCE_DIR}/android_main.c
 # Create library
 add_library(itgmania SHARED ${SMDATA_ALL_FILES_SRC_ABS})
 
-# Include directories
-include_directories(
+# Set C++17 Standard
+set_target_properties(itgmania PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS ON
+)
+
+# Use PRIVATE to ensure it's on the include path for this target's sources
+target_include_directories(itgmania PRIVATE
     ${SDL2_ROOT}/include
     ${ITGMANIA_ROOT}/src
     ${ITGMANIA_ROOT}/extern/ffmpeg/include
