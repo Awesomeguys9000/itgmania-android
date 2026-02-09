@@ -65,9 +65,6 @@ endforeach()
 # Add Android entry point
 list(APPEND SMDATA_ALL_FILES_SRC_ABS "${CMAKE_CURRENT_SOURCE_DIR}/android_main.cpp")
 
-# Define main as sm_main so we can call it from android_main.cpp
-add_definitions(-Dmain=sm_main)
-
 # Create library
 add_library(itgmania SHARED ${SMDATA_ALL_FILES_SRC_ABS})
 
