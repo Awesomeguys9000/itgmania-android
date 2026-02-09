@@ -76,6 +76,7 @@ include_directories(
     ${SDL2_ROOT}/include
     ${ITGMANIA_ROOT}/src
     ${ITGMANIA_ROOT}/extern/ffmpeg/include
+    ${SM_GENERATED_SRC_DIR}
 )
 
 # Link libraries
