@@ -46,6 +46,25 @@ inline const std::vector<RString>& GetDefaultSoundDriverList() {
 	return soundDriverList;
 }
 
+#elif defined(ANDROID)
+#include "ArchHooks/ArchHooks_Android.h"
+#include "LowLevelWindow/LowLevelWindow_SDL.h"
+
+inline const std::vector<RString>& GetDefaultInputDriverList() {
+	static const std::vector<RString> inputDriverList = { "SDL" };
+	return inputDriverList;
+}
+
+inline const std::vector<RString>& GetDefaultMovieDriverList() {
+	static const std::vector<RString> movieDriverList = { "Null" };
+	return movieDriverList;
+}
+
+inline const std::vector<RString>& GetDefaultSoundDriverList() {
+	static const std::vector<RString> soundDriverList = { "SDL", "Null" };
+	return soundDriverList;
+}
+
 #elif defined(UNIX)
 #include "ArchHooks/ArchHooks_Unix.h"
 #include "LowLevelWindow/LowLevelWindow_X11.h"

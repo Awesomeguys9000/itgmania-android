@@ -5,6 +5,7 @@
 
 #include "EnumHelper.h"
 
+#include <algorithm>
 #include <array>
 #include <cstdint>
 
