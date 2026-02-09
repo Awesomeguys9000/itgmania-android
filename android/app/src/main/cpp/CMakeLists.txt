@@ -101,5 +101,4 @@ target_link_libraries(itgmania
     vorbis
     ogg
     ixwebsocket
-    hidapi
 )
