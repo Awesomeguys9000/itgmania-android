@@ -78,10 +78,15 @@ void RageSoundDriver_SDL::AudioCallback( void *userdata, Uint8 *stream, int len 
     RageSoundDriver_SDL *driver = (RageSoundDriver_SDL*)userdata;
     if( driver )
         driver->FillAudio( stream, len );
+    else
+        SDL_memset(stream, 0, len);
 }
 
 void RageSoundDriver_SDL::FillAudio( Uint8 *stream, int len )
 {
+    // Important: Initialize buffer to silence as Mix() accumulates
+    SDL_memset(stream, 0, len);
+
     int16_t *buf = (int16_t*)stream;
     int frames = len / (2 * sizeof(int16_t)); // 2 channels
 

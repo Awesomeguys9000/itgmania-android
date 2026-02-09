@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "ArchHooks/ArchHooks.h"
 #include "RageInputDevice.h"
+#include "RageDisplay.h"
 
 REGISTER_INPUT_HANDLER_CLASS2( SDL, SDL );
 
@@ -152,9 +153,6 @@ void InputHandler_SDL::HandleEvent( const SDL_Event &event )
     case SDL_CONTROLLERBUTTONDOWN:
     case SDL_CONTROLLERBUTTONUP:
     {
-        // Simple mapping: always map to Joystick 1 for now.
-        // SDL provides a robust GameController API but mapping to multiple StepMania players
-        // requires more logic.
         InputDevice device = DEVICE_JOY1;
 
         DeviceButton button = SDLControllerButtonToDeviceButton( event.cbutton.button );
@@ -167,6 +165,15 @@ void InputHandler_SDL::HandleEvent( const SDL_Event &event )
 
     case SDL_CONTROLLERDEVICEADDED:
         SDL_GameControllerOpen( event.cdevice.which );
+        break;
+
+    case SDL_WINDOWEVENT:
+        if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ||
+            event.window.event == SDL_WINDOWEVENT_RESIZED)
+        {
+            if (DISPLAY)
+                DISPLAY->ResolutionChanged();
+        }
         break;
 	}
 }

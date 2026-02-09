@@ -51,11 +51,25 @@ list(APPEND SMDATA_ALL_FILES_SRC
             ${SMDATA_OS_SRC}
             ${SMDATA_FILE_TYPES_SRC})
 
+# Prepend source directory to all files
+set(SM_SRC_DIR "${ITGMANIA_ROOT}/src")
+set(SMDATA_ALL_FILES_SRC_ABS "")
+foreach(FILE ${SMDATA_ALL_FILES_SRC})
+    if(IS_ABSOLUTE ${FILE})
+        list(APPEND SMDATA_ALL_FILES_SRC_ABS ${FILE})
+    else()
+        list(APPEND SMDATA_ALL_FILES_SRC_ABS "${SM_SRC_DIR}/${FILE}")
+    endif()
+endforeach()
+
 # Add Android entry point
-list(APPEND SMDATA_ALL_FILES_SRC "${CMAKE_CURRENT_SOURCE_DIR}/android_main.cpp")
+list(APPEND SMDATA_ALL_FILES_SRC_ABS "${CMAKE_CURRENT_SOURCE_DIR}/android_main.cpp")
+
+# Define main as sm_main so we can call it from android_main.cpp
+add_definitions(-Dmain=sm_main)
 
 # Create library
-add_library(itgmania SHARED ${SMDATA_ALL_FILES_SRC})
+add_library(itgmania SHARED ${SMDATA_ALL_FILES_SRC_ABS})
 
 # Include directories
 include_directories(
