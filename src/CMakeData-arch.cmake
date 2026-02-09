@@ -12,6 +12,9 @@ if(WIN32)
 elseif(APPLE)
   list(APPEND SMDATA_ARCH_THREADS_HPP "arch/Threads/Threads_Pthreads.h")
   list(APPEND SMDATA_ARCH_THREADS_SRC "arch/Threads/Threads_Pthreads.cpp")
+elseif(ANDROID)
+  list(APPEND SMDATA_ARCH_THREADS_HPP "arch/Threads/Threads_Pthreads.h")
+  list(APPEND SMDATA_ARCH_THREADS_SRC "arch/Threads/Threads_Pthreads.cpp")
 else()
   if(HAS_PTHREAD)
     list(APPEND SMDATA_ARCH_THREADS_HPP "arch/Threads/Threads_Pthreads.h")
@@ -46,6 +49,9 @@ if(WIN32)
 elseif(APPLE)
   list(APPEND SMDATA_ARCH_SOUND_SRC "arch/Sound/RageSoundDriver_AU.mm")
   list(APPEND SMDATA_ARCH_SOUND_HPP "arch/Sound/RageSoundDriver_AU.h")
+elseif(ANDROID)
+  list(APPEND SMDATA_ARCH_SOUND_SRC "arch/Sound/RageSoundDriver_SDL.cpp")
+  list(APPEND SMDATA_ARCH_SOUND_HPP "arch/Sound/RageSoundDriver_SDL.h")
 else() # Unix
   if(HAS_PULSE)
     list(APPEND SMDATA_ARCH_SOUND_SRC
@@ -80,15 +86,18 @@ source_group("Arch Specific\\\\Sound"
 
 list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_SRC
             "arch/MovieTexture/MovieTexture.cpp"
-            "arch/MovieTexture/MovieTexture_FFMpeg.cpp"
             "arch/MovieTexture/MovieTexture_Generic.cpp"
             "arch/MovieTexture/MovieTexture_Null.cpp")
 
 list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_HPP
             "arch/MovieTexture/MovieTexture.h"
-            "arch/MovieTexture/MovieTexture_FFMpeg.h"
             "arch/MovieTexture/MovieTexture_Generic.h"
             "arch/MovieTexture/MovieTexture_Null.h")
+
+if(NOT ANDROID)
+  list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_SRC "arch/MovieTexture/MovieTexture_FFMpeg.cpp")
+  list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_HPP "arch/MovieTexture/MovieTexture_FFMpeg.h")
+endif()
 
 source_group("Arch Specific\\\\Movie Texture"
              FILES
@@ -137,6 +146,11 @@ elseif(APPLE)
               "arch/LowLevelWindow/LowLevelWindow_MacOSX.mm")
   list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
               "arch/LowLevelWindow/LowLevelWindow_MacOSX.h")
+elseif(ANDROID)
+  list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
+              "arch/LowLevelWindow/LowLevelWindow_SDL.cpp")
+  list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
+              "arch/LowLevelWindow/LowLevelWindow_SDL.h")
 else(UNIX)
   if(X11_FOUND)
     list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
@@ -159,6 +173,8 @@ if(WIN32)
               "arch/LoadingWindow/LoadingWindow_Win32.cpp")
   list(
     APPEND SMDATA_ARCH_LOADING_HPP "arch/LoadingWindow/LoadingWindow_Win32.h")
+elseif(ANDROID)
+  list(APPEND SMDATA_ARCH_LOADING_HPP "arch/LoadingWindow/LoadingWindow_Null.h")
 else()
   list(APPEND SMDATA_ARCH_LOADING_HPP "arch/LoadingWindow/LoadingWindow_Null.h")
   if(APPLE)
@@ -195,7 +211,7 @@ list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver.h"
             "arch/Lights/LightsDriver_HidBlueDot.h")
 
 # TODO: Confirm if Apple can use the export.
-if(NOT APPLE)
+if(NOT APPLE AND NOT ANDROID)
   if(WIN32)
     list(APPEND SMDATA_ARCH_LIGHTS_SRC
                 "arch/Lights/LightsDriver_Win32Serial.cpp"
@@ -243,7 +259,7 @@ if(NOT APPLE)
       endif()
     endif()
   endif(WIN32)
-endif(NOT APPLE)
+endif(NOT APPLE AND NOT ANDROID)
 
 source_group("Arch Specific\\\\Lights"
              FILES
@@ -283,6 +299,11 @@ elseif(APPLE)
               "arch/InputHandler/InputHandler_MacOSX_HID.mm")
   list(APPEND SMDATA_ARCH_INPUT_HPP
               "arch/InputHandler/InputHandler_MacOSX_HID.h")
+elseif(ANDROID)
+  list(APPEND SMDATA_ARCH_INPUT_SRC
+              "arch/InputHandler/InputHandler_SDL.cpp")
+  list(APPEND SMDATA_ARCH_INPUT_HPP
+              "arch/InputHandler/InputHandler_SDL.h")
 else() # Unix/Linux
   if(LINUX)
     list(APPEND SMDATA_ARCH_INPUT_SRC
@@ -336,6 +357,9 @@ if(NOT APPLE)
     list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooks_Win32.cpp"
                 "arch/ArchHooks/ArchHooks_Win32Static.cpp")
     list(APPEND SMDATA_ARCH_HOOKS_HPP "arch/ArchHooks/ArchHooks_Win32.h")
+  elseif(ANDROID)
+    list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooks_Android.cpp")
+    list(APPEND SMDATA_ARCH_HOOKS_HPP "arch/ArchHooks/ArchHooks_Android.h")
   else(WIN32)
     list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooks_Unix.cpp")
     list(APPEND SMDATA_ARCH_HOOKS_HPP "arch/ArchHooks/ArchHooks_Unix.h")

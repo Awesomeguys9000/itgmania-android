@@ -1,18 +1,12 @@
 # CMakeLists.txt for ITGMania Android Native Build
-# This integrates with the main ITGMania CMake build system
 
 cmake_minimum_required(VERSION 3.22)
 project(itgmania-android)
 
-# Android NDK builds use this file as the entry point
-# It delegates to the main ITGMania CMake configuration
-
-# Paths relative to this CMakeLists.txt location (android/app/src/main/cpp)
 get_filename_component(ITGMANIA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../../.." ABSOLUTE)
 set(SDL2_ROOT "${ITGMANIA_ROOT}/extern/SDL")
 
-
-# Set Android-specific options
+# Set Android options
 set(ANDROID TRUE)
 set(WITH_SDL2 ON CACHE BOOL "Use SDL2 for Android")
 set(WITH_GTK3 OFF CACHE BOOL "Disable GTK3 on Android")
@@ -21,26 +15,56 @@ set(WITH_PULSEAUDIO OFF CACHE BOOL "Disable PulseAudio on Android")
 set(WITH_ALSA OFF CACHE BOOL "Disable ALSA on Android")
 set(WITH_JACK OFF CACHE BOOL "Disable JACK on Android")
 set(WITH_OSS OFF CACHE BOOL "Disable OSS on Android")
+set(WITH_MINIMAID OFF CACHE BOOL "Disable Minimaid on Android")
+set(WITH_FFMPEG OFF CACHE BOOL "Disable FFmpeg on Android")
 
-# Build SDL2 first
+# Build SDL2
 add_subdirectory(${SDL2_ROOT} SDL2_build)
 
-# Get all ITGMania source files
-# For now, we'll create a minimal stub that links against SDL2
-# Full integration will be added incrementally
+# Include StepmaniaCore
+set(SM_ROOT_DIR ${ITGMANIA_ROOT})
+include(${ITGMANIA_ROOT}/StepmaniaCore.cmake)
 
-# Include paths
+# Build externals
+add_subdirectory(${ITGMANIA_ROOT}/extern extern_build)
+
+# Define sources
+set(CMAKE_MODULE_PATH ${ITGMANIA_ROOT}/src)
+include(${ITGMANIA_ROOT}/src/CMakeData-arch.cmake)
+include(${ITGMANIA_ROOT}/src/CMakeData-rage.cmake)
+include(${ITGMANIA_ROOT}/src/CMakeData-os.cmake)
+include(${ITGMANIA_ROOT}/src/CMakeData-actor.cmake)
+include(${ITGMANIA_ROOT}/src/CMakeData-screen.cmake)
+include(${ITGMANIA_ROOT}/src/CMakeData-data.cmake)
+include(${ITGMANIA_ROOT}/src/CMakeData-file-types.cmake)
+include(${ITGMANIA_ROOT}/src/CMakeData-globals.cmake)
+include(${ITGMANIA_ROOT}/src/CMakeData-singletons.cmake)
+
+list(APPEND SMDATA_ALL_FILES_SRC
+            ${SMDATA_GLOBAL_FILES_SRC}
+            ${SMDATA_GLOBAL_SINGLETON_SRC}
+            ${SMDATA_ALL_ACTORS_SRC}
+            ${SMDATA_ALL_ARCH_SRC}
+            ${SMDATA_ALL_DATA_SRC}
+            ${SMDATA_ALL_RAGE_SRC}
+            ${SMDATA_ALL_SCREENS_SRC}
+            ${SMDATA_OS_SRC}
+            ${SMDATA_FILE_TYPES_SRC})
+
+# Add Android entry point
+list(APPEND SMDATA_ALL_FILES_SRC "${CMAKE_CURRENT_SOURCE_DIR}/android_main.cpp")
+
+# Create library
+add_library(itgmania SHARED ${SMDATA_ALL_FILES_SRC})
+
+# Include directories
 include_directories(
     ${SDL2_ROOT}/include
     ${ITGMANIA_ROOT}/src
+    ${ITGMANIA_ROOT}/extern/ffmpeg/include
 )
 
-# Minimal Android entry point
-add_library(itgmania SHARED
-    ${CMAKE_CURRENT_SOURCE_DIR}/android_main.cpp
-)
-
-# Link against SDL2
+# Link libraries
 target_link_libraries(itgmania
     SDL2
     SDL2main
@@ -48,10 +72,20 @@ target_link_libraries(itgmania
     log
     GLESv2
     EGL
-)
-
-# Set output name
-set_target_properties(itgmania PROPERTIES
-    OUTPUT_NAME "itgmania"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+    # External libs
+    lua-5.1
+    miniz
+    mad
+    pcre
+    tomcrypt
+    tommath
+    libjpeg-turbo
+    zlib
+    png
+    jsoncpp
+    vorbisfile
+    vorbis
+    ogg
+    ixwebsocket
+    hidapi
 )

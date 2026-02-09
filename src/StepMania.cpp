@@ -437,6 +437,16 @@ struct VideoCardDefaults
 {
 	// These lines correspond to the struct defined above.
 	VideoCardDefaults(
+		"Android",      // Video card name (Android)
+		"gles2",        // Available renderers
+		1280,720,       // Default resolution
+		32,             // Display color
+		32,             // Texture color
+		32,             // Movie color
+		2048,           // Texture size
+		true            // Smooth lines
+	),
+	VideoCardDefaults(
 		"OpenGL",       // Video card name (generic Mac/Linux)
 		"opengl",       // Available renderers
 		1280,720,       // Default resolution
@@ -463,6 +473,8 @@ static RString GetVideoDriverName()
 {
 #if defined(_WIN32)
 	return GetPrimaryVideoDriverName();
+#elif defined(ANDROID)
+	return "Android";
 #else
 	return "OpenGL";
 #endif
