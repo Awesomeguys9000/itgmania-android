@@ -2,6 +2,7 @@
 #define LOW_LEVEL_WINDOW_SDL_H
 
 #include "LowLevelWindow.h"
+#include "RageDisplay.h" // For ActualVideoModeParams
 #include <SDL.h>
 
 class LowLevelWindow_SDL : public LowLevelWindow

@@ -11,6 +11,9 @@ public:
 	virtual void Init();
 	virtual RString GetArchName() const { return "Android"; }
 	virtual void DumpDebugInfo();
+
+    // Stub implementation for now
+    virtual float GetDisplayAspectRatio() { return 1.77778f; } // 16:9 default
 };
 
 #ifdef ARCH_HOOKS
