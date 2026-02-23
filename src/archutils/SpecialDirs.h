@@ -1,5 +1,5 @@
 #if defined(ANDROID)
-#include "Android/SpecialDirs.h"
+#include "Unix/SpecialDirs.h"
 #elif defined(_WIN32)
 #include "Win32/SpecialDirs.h"
 #elif defined(MACOSX)
