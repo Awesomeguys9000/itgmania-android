@@ -11,6 +11,9 @@
 #include <windows.h>
 #endif
 
+#if defined(SUPPORT_GLES2)
+#define GLEW_NO_GLU
+#endif
 #include <GL/glew.h>
 
 /* Windows defines GL_EXT_paletted_texture incompletely: */
