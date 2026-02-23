@@ -9,6 +9,7 @@ HidDevice::HidDevice(int vid, const std::vector<int> pids, int interfaceNum, boo
 	autoReconnection{ autoReconnection },
 	nonBlockingRead{ nonBlockingRead }
 {
+#ifndef ANDROID
 	bool result = TryConnect();
 
 	if (!result)
@@ -19,6 +20,9 @@ HidDevice::HidDevice(int vid, const std::vector<int> pids, int interfaceNum, boo
 	{
 		foundOnce = true;
 	}
+#else
+	LOG->Warn("HidDevice with vendor_id 0x%04x and pids 0x%s %d not supported on Android.", vid, GetPidsString(pids).c_str(), interfaceNum);
+#endif
 }
 
 HidDevice::HidDevice(int vid, int pid, int interfaceNum, bool autoReconnection, bool nonBlockingRead) :
@@ -28,12 +32,15 @@ HidDevice::HidDevice(int vid, int pid, int interfaceNum, bool autoReconnection, 
 
 HidDevice::~HidDevice()
 {
+#ifndef ANDROID
 	Close();
 	hid_exit();
+#endif
 }
 
 void HidDevice::Close()
 {
+#ifndef ANDROID
 	hid_close(handle);
 	handle = nullptr;
 
@@ -41,10 +48,12 @@ void HidDevice::Close()
 	foundDeviceInfo.pid = 0;
 	foundDeviceInfo.interfaceNum = 0;
 	foundDeviceInfo.path = nullptr;
+#endif
 }
 
 bool HidDevice::Open(const char* path)
 {
+#ifndef ANDROID
 	handle = hid_open_path(path);
 
 	if (nonBlockingRead)
@@ -60,20 +69,28 @@ bool HidDevice::Open(const char* path)
 	}
 
 	return handle != nullptr;
+#else
+	return false;
+#endif
 }
 
 bool HidDevice::TryConnect()
 {
+#ifndef ANDROID
 	GetDeviceInfo(vid, pids, interfaceNum, &foundDeviceInfo);
 
 	if (foundDeviceInfo.path == nullptr)
 		return false;
 
 	return Open(foundDeviceInfo.path);
+#else
+	return false;
+#endif
 }
 
 bool HidDevice::CheckConnection()
 {
+#ifndef ANDROID
 	if (IsConnected())
 		return true;
 
@@ -81,15 +98,26 @@ bool HidDevice::CheckConnection()
 		return false;
 
 	return TryConnect();
+#else
+	return false;
+#endif
 }
 
 const wchar_t* HidDevice::GetError()
 {
+#ifndef ANDROID
 	return hid_read_error(handle);
+#else
+	return L"Not supported on Android";
+#endif
 }
 
 bool HidDevice::IsConnected() {
+#ifndef ANDROID
 	return handle != nullptr;
+#else
+	return false;
+#endif
 }
 
 bool HidDevice::FoundOnce()
@@ -117,6 +145,7 @@ const RString HidDevice::GetPidsString(const std::vector<int> pids)
 
 void HidDevice::GetDeviceInfo(int vid, const std::vector<int> pids, int interfaceNumber, HidDeviceInfo* device_info)
 {
+#ifndef ANDROID
 	bool found{ false };
 	struct hid_device_info* devs, * cur_dev;
 	size_t size = pids.size();
@@ -168,10 +197,12 @@ void HidDevice::GetDeviceInfo(int vid, const std::vector<int> pids, int interfac
 		device_info->interfaceNum = cur_dev->interface_number;
 		device_info->path = cur_dev->path;
 	}
+#endif
 }
 
 int HidDevice::Read(unsigned char* data, size_t length)
 {
+#ifndef ANDROID
 	if (!CheckConnection())
 		return NotConnected;
 
@@ -184,10 +215,14 @@ int HidDevice::Read(unsigned char* data, size_t length)
 	}
 
 	return result;
+#else
+	return NotConnected;
+#endif
 }
 
 HidResults HidDevice::Write(const unsigned char* data, size_t length)
 {
+#ifndef ANDROID
 	if (!CheckConnection())
 		return NotConnected;
 
@@ -201,4 +236,7 @@ HidResults HidDevice::Write(const unsigned char* data, size_t length)
 	}
 
 	return Success;
+#else
+	return OperationFailed;
+#endif
 }

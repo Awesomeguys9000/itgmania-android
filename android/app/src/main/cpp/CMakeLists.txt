@@ -82,8 +82,10 @@ set_target_properties(itgmania PROPERTIES
 target_include_directories(itgmania PRIVATE
     ${SDL2_ROOT}/include
     ${ITGMANIA_ROOT}/src
+    ${ITGMANIA_ROOT}/src/arch
     ${ITGMANIA_ROOT}/extern/ffmpeg/include
     ${SM_GENERATED_SRC_DIR}
+    ${ITGMANIA_ROOT}/extern/hidapi/hidapi
 )
 
 # Link libraries
