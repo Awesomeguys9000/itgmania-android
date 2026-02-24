@@ -14,6 +14,9 @@
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
+#if defined(SUPPORT_GLES2)
+#define GLEW_NO_GLU
+#endif
 #include <GL/glew.h>
 
 #include <cstddef>

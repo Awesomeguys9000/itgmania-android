@@ -9,6 +9,7 @@ set(SDL2_ROOT "${ITGMANIA_ROOT}/extern/SDL")
 # Set Android options
 set(ANDROID TRUE)
 set(WITH_SDL2 ON CACHE BOOL "Use SDL2 for Android")
+set(WITH_GLES2 ON CACHE BOOL "Use GLES2 for Android")
 set(WITH_GTK3 OFF CACHE BOOL "Disable GTK3 on Android")
 set(WITH_X11 OFF CACHE BOOL "Disable X11 on Android")
 set(WITH_PULSEAUDIO OFF CACHE BOOL "Disable PulseAudio on Android")
@@ -82,9 +83,15 @@ set_target_properties(itgmania PROPERTIES
 target_include_directories(itgmania PRIVATE
     ${SDL2_ROOT}/include
     ${ITGMANIA_ROOT}/src
+    ${ITGMANIA_ROOT}/src/arch
     ${ITGMANIA_ROOT}/extern/ffmpeg/include
     ${SM_GENERATED_SRC_DIR}
+    ${ITGMANIA_ROOT}/extern/hidapi/hidapi
+    ${ITGMANIA_ROOT}/extern/glew/include
 )
+
+# Define SUPPORT_GLES2 for Android build
+target_compile_definitions(itgmania PRIVATE SUPPORT_GLES2)
 
 # Link libraries
 target_link_libraries(itgmania

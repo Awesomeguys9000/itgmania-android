@@ -105,6 +105,12 @@ else()
                 "archutils/Unix/RunningUnderValgrind.h"
                 "archutils/Unix/SignalHandler.h"
                 "archutils/Unix/SpecialDirs.h")
+
+    if(ANDROID)
+        # Android shares these Unix sources
+        list(APPEND SMDATA_OS_SRC "archutils/Unix/SpecialDirs.cpp")
+        list(APPEND SMDATA_OS_HPP "archutils/Unix/SpecialDirs.h")
+    endif()
     if(X11_FOUND)
       list(APPEND SMDATA_OS_SRC "archutils/Unix/X11Helper.cpp")
       list(APPEND SMDATA_OS_HPP "archutils/Unix/X11Helper.h")

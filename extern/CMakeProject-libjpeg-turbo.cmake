@@ -15,6 +15,16 @@ if(APPLE)
   )
 endif()
 
+if(ANDROID)
+  list(APPEND ARCH_FLAGS
+    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+    -DANDROID_ABI=${ANDROID_ABI}
+    -DANDROID_PLATFORM=${ANDROID_PLATFORM}
+    -DANDROID_STL=${ANDROID_STL}
+    -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
+  )
+endif()
+
 include(ExternalProject)
 ExternalProject_Add(
   libjpeg_turbo_project
